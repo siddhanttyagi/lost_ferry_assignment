@@ -10,7 +10,6 @@ def create_post():
     try:
         
         data = request.get_json()
-        print(data)
         term = data.get('title')
         media= data.get('content')
         entity=data.get('entity')
@@ -21,13 +20,13 @@ def create_post():
             "entity": entity
         }
         response = requests.get(apiurl, params=query_params)
-        if response.status_code == 200:
+        if response:
 
-            data = response.json() 
-            print(data)
+            data = response.json()
             list_of_songs=[]
             for sub_dict in data['results']:
                 list_of_songs.append(sub_dict['collectionName'])
+                print(sub_dict['collectionName'])
             return {"data": list_of_songs}
 
     except Exception as e:
