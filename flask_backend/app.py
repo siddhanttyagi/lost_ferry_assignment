@@ -3,39 +3,39 @@ import requests
 
 app = Flask(__name__)
 
-
-
 @app.route('/posts', methods=['POST'])
 def create_post():
-    try:
-        
-        data = request.get_json()
-        term = data.get('title')
-        media= data.get('content')
-        entity=data.get('entity')
-        apiurl='https://itunes.apple.com/search'
-        query_params={
-            "term": term,
-            "media": media,
-            "entity": entity
-        }
-        response = requests.get(apiurl, params=query_params)
-        if response:
+    data = request.get_json()
+    term = data.get('title', '')  # Default to empty string if not provided
+    media = data.get('content', '')  # Default to empty string if not provided
+    entity = data.get('entity', '')  # Default to empty string if not provided
 
-            data = response.json()
-            list_of_songs=[]
-            for sub_dict in data['results']:
-                list_of_songs.append(sub_dict['collectionName'])
-                print(sub_dict['collectionName'])
-            return {"data": list_of_songs}
-
-    except Exception as e:
-        # Return an error response if something goes wrong
-        return jsonify({"error": str(e)}), 500
-
-
-
+    apiurl = 'https://itunes.apple.com/search'
     
+    # Prepare the query parameters, excluding empty parameters
+    params = {
+        key: value for key, value in {
+            'term': term,
+            'media': media,
+            'entity': entity,
+        }.items() if value
+    }
+
+    # Make a GET request to the iTunes API
+    response = requests.get(apiurl, params=params)
+
+    if response.status_code == 200:
+        # Successful response
+        result_data = response.json()
+        print(result_data)
+        return {'data': result_data}
+    else:
+        # Error occurred while fetching data
+        error_message = f"Error: {response.status_code} - {response.text}"
+        return jsonify({'data': [], 'error': error_message}), response.status_code
+
+
+
 
 
 if __name__ == '__main__':

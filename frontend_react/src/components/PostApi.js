@@ -9,7 +9,7 @@ const MyComponent = () => {
   const [entity, setEntity] = useState('');
   
   // State variable to hold the response data
-  const [responseData, setResponseData] = useState(null);
+  const [responseData, setResponseData] = useState({});
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -25,8 +25,7 @@ const MyComponent = () => {
 
       // Update the state variable with the response data
       setResponseData(response.data.data);
-
-      // Reset form fields after successful submission
+      console.log(responseData)
       setTitle('');
       setContent('');
       setEntity('');
@@ -54,19 +53,18 @@ const MyComponent = () => {
         </div>
         <button type="submit">Submit</button>
       </form>
-
-      {/* Display the response data */}
-      <br></br>
-      {responseData && (
-        <div>
-          <h3>Response Data:</h3>
-          <ul className={styles.list}>
-            {responseData.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div>
+  {responseData.results && (
+    <div>
+      <h3>Response Data:</h3>
+      <ul className={styles.list}>
+        {responseData.results.map((item, index) => (
+          <li key={index}>{item.collectionName}</li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
     </div>
   );
 };
